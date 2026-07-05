@@ -23,4 +23,5 @@ private:
     QPushButton* btnRect;
     QPushButton* btnEllipse;
     QPushButton* btnSelection;
+    QPushButton* btnClear;
 };

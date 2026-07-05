@@ -15,11 +15,13 @@ MainWindow::MainWindow(QWidget* parent)
     btnRect = new QPushButton("Прямоугольник", this);
     btnEllipse = new QPushButton("Овал", this);
     btnSelection = new QPushButton("Курсор", this);
+    btnClear = new QPushButton("Очистить всё", this);
 
     buttonLayout->addWidget(btnLine);
     buttonLayout->addWidget(btnRect);
     buttonLayout->addWidget(btnEllipse);
     buttonLayout->addWidget(btnSelection);
+    buttonLayout->addWidget(btnClear);
     buttonLayout->addStretch();
 
     scene = new CustomScene(this);
@@ -47,7 +49,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(btnSelection, &QPushButton::clicked, [this]() {
         scene->setDrawingType(FigureType::None);
         });
-
+    connect(btnClear, &QPushButton::clicked, [this]() {
+        scene->clear();
+        });
     resize(900, 700);
 }
 
