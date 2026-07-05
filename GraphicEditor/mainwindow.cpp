@@ -1,6 +1,12 @@
 ﻿#include "mainwindow.h"
 #include "customscene.h"
 #include <QPainter>
+#include <QFileDialog>
+#include <QFile>
+#include <QDataStream>
+#include <QGraphicsLineItem>
+#include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent) {
@@ -16,12 +22,16 @@ MainWindow::MainWindow(QWidget* parent)
     btnEllipse = new QPushButton("Овал", this);
     btnSelection = new QPushButton("Курсор", this);
     btnClear = new QPushButton("Очистить всё", this);
+    btnSave = new QPushButton("Сохранить", this);
+    btnLoad = new QPushButton("Открыть", this);
 
     buttonLayout->addWidget(btnLine);
     buttonLayout->addWidget(btnRect);
     buttonLayout->addWidget(btnEllipse);
     buttonLayout->addWidget(btnSelection);
     buttonLayout->addWidget(btnClear);
+    buttonLayout->addWidget(btnSave);
+    buttonLayout->addWidget(btnLoad);
     buttonLayout->addStretch();
 
     scene = new CustomScene(this);
@@ -52,6 +62,77 @@ MainWindow::MainWindow(QWidget* parent)
     connect(btnClear, &QPushButton::clicked, [this]() {
         scene->clear();
         });
+    connect(btnSave, &QPushButton::clicked, [this]() {
+        QString fileName = QFileDialog::getSaveFileName(this, "Сохранить проект", "", "Векторный редактор (*.ved)");
+        if (fileName.isEmpty()) return;
+
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) return;
+
+        QDataStream out(&file);
+
+        QList<QGraphicsItem*> items = scene->items();
+
+        out << static_cast<int>(items.size());
+
+        for (QGraphicsItem* item : items) {
+            if (auto line = qgraphicsitem_cast<QGraphicsLineItem*>(item)) {
+                out << static_cast<int>(FigureType::Line);
+                out << line->line();
+            }
+            else if (auto rect = qgraphicsitem_cast<QGraphicsRectItem*>(item)) {
+                out << static_cast<int>(FigureType::Rectangle);
+                out << rect->rect();
+            }
+            else if (auto ellipse = qgraphicsitem_cast<QGraphicsEllipseItem*>(item)) {
+                out << static_cast<int>(FigureType::Ellipse);
+                out << ellipse->rect();
+            }
+        }
+        file.close();
+        });
+
+    connect(btnLoad, &QPushButton::clicked, [this]() {
+        QString fileName = QFileDialog::getOpenFileName(this, "Открыть проект", "", "Векторный редактор (*.ved)");
+        if (fileName.isEmpty()) return;
+
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) return;
+
+        QDataStream in(&file);
+
+        scene->clear();
+
+        int count = 0;
+        in >> count; 
+
+        QPen pen(Qt::black, 2);
+        QBrush brush(Qt::transparent);
+
+        for (int i = 0; i < count; ++i) {
+            int typeInt;
+            in >> typeInt;
+            FigureType type = static_cast<FigureType>(typeInt);
+
+            if (type == FigureType::Line) {
+                QLineF lineGeom;
+                in >> lineGeom;
+                scene->addLine(lineGeom, pen);
+            }
+            else if (type == FigureType::Rectangle) {
+                QRectF rectGeom;
+                in >> rectGeom;
+                scene->addRect(rectGeom, pen, brush);
+            }
+            else if (type == FigureType::Ellipse) {
+                QRectF ellipseGeom;
+                in >> ellipseGeom;
+                scene->addEllipse(ellipseGeom, pen, brush);
+            }
+        }
+        file.close();
+        });
+
     resize(900, 700);
 }
 
