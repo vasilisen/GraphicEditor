@@ -7,9 +7,12 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsEllipseItem>
+#include <QColorDialog>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent) {
+    currentLineColor = Qt::black;
+    currentFillColor = Qt::transparent;
 
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -24,6 +27,8 @@ MainWindow::MainWindow(QWidget* parent)
     btnClear = new QPushButton("Очистить всё", this);
     btnSave = new QPushButton("Сохранить", this);
     btnLoad = new QPushButton("Открыть", this);
+    btnLineColor = new QPushButton("Цвет линии", this);
+    btnFillColor = new QPushButton("Цвет заливки", this);
 
     buttonLayout->addWidget(btnLine);
     buttonLayout->addWidget(btnRect);
@@ -32,6 +37,8 @@ MainWindow::MainWindow(QWidget* parent)
     buttonLayout->addWidget(btnClear);
     buttonLayout->addWidget(btnSave);
     buttonLayout->addWidget(btnLoad);
+    buttonLayout->addWidget(btnLineColor);
+    buttonLayout->addWidget(btnFillColor);
     buttonLayout->addStretch();
 
     scene = new CustomScene(this);
@@ -131,6 +138,21 @@ MainWindow::MainWindow(QWidget* parent)
             }
         }
         file.close();
+        });
+    connect(btnLineColor, &QPushButton::clicked, [this]() {
+        QColor color = QColorDialog::getColor(currentLineColor, this, "Выберите цвет линии");
+        if (color.isValid()) {
+            currentLineColor = color;
+            scene->setColors(currentLineColor, currentFillColor); 
+        }
+        });
+
+    connect(btnFillColor, &QPushButton::clicked, [this]() {
+        QColor color = QColorDialog::getColor(currentFillColor, this, "Выберите цвет заливки");
+        if (color.isValid()) {
+            currentFillColor = color;
+            scene->setColors(currentLineColor, currentFillColor); 
+        }
         });
 
     resize(900, 700);

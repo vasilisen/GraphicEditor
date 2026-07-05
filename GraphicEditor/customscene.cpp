@@ -18,8 +18,9 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     }
 
     startPoint = event->scenePos();
-    QPen pen(Qt::black, 2);
-    QBrush brush(Qt::transparent); 
+    QPen pen(lineColor, 2);
+    QBrush brush(fillColor);
+
 
     if (currentType == FigureType::Line) {
         tempLine = addLine(QLineF(startPoint, startPoint), pen);
@@ -66,4 +67,8 @@ void CustomScene::updateDrawing(QPointF currentPoint) {
         QRectF rect(startPoint, currentPoint);
         tempEllipse->setRect(rect.normalized());
     }
+}
+void CustomScene::setColors(QColor line, QColor fill) {
+    lineColor = line;
+    fillColor = fill;
 }

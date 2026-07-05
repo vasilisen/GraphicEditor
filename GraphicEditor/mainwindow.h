@@ -16,9 +16,6 @@ public:
     ~MainWindow();
 
 private:
-    CustomScene* scene;        
-    QGraphicsView* view;       
-
     QPushButton* btnLine;
     QPushButton* btnRect;
     QPushButton* btnEllipse;
@@ -26,4 +23,14 @@ private:
     QPushButton* btnClear;
     QPushButton* btnSave;
     QPushButton* btnLoad;
+    QPushButton* btnLineColor;  
+    QPushButton* btnFillColor;   
+
+private:
+    CustomScene* scene;
+    QGraphicsView* view;
+
+    QColor currentLineColor;    
+    QColor currentFillColor;     
+
 };

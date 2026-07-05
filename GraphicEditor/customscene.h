@@ -10,6 +10,7 @@ class CustomScene : public QGraphicsScene {
 public:
     explicit CustomScene(QObject* parent = nullptr);
     void setDrawingType(FigureType type);
+    void setColors(QColor line, QColor fill);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
@@ -23,6 +24,9 @@ private:
     QGraphicsLineItem* tempLine;
     QGraphicsRectItem* tempRect;
     QGraphicsEllipseItem* tempEllipse;
+    QColor lineColor = Qt::black;
+    QColor fillColor = Qt::transparent;
+
 
     void updateDrawing(QPointF currentPoint);
 };
