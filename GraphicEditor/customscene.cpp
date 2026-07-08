@@ -18,7 +18,8 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     }
 
     startPoint = event->scenePos();
-    QPen pen(lineColor, 2);
+    QPen pen(lineColor, lineWidth); 
+
     QBrush brush(fillColor);
 
 
@@ -31,6 +32,14 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     else if (currentType == FigureType::Ellipse) {
         tempEllipse = addEllipse(QRectF(startPoint, QSizeF(0, 0)), pen, brush);
     }
+    if (currentType == FigureType::Eraser) {
+        if (QGraphicsItem* item = itemAt(event->scenePos(), QTransform())) {
+            removeItem(item);
+            delete item; 
+        }
+        return;
+    }
+
 }
 
 void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
@@ -71,4 +80,7 @@ void CustomScene::updateDrawing(QPointF currentPoint) {
 void CustomScene::setColors(QColor line, QColor fill) {
     lineColor = line;
     fillColor = fill;
+}
+void CustomScene::setLineWidth(int width) {
+    lineWidth = width;
 }

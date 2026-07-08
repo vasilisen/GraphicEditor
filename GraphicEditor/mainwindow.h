@@ -25,6 +25,9 @@ private:
     QPushButton* btnLoad;
     QPushButton* btnLineColor;  
     QPushButton* btnFillColor;   
+    QPushButton* btnEraser;
+    QPushButton* btnThick;
+    QPushButton* btnThin;
 
 private:
     CustomScene* scene;

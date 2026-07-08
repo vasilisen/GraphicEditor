@@ -154,6 +154,33 @@ MainWindow::MainWindow(QWidget* parent)
             scene->setColors(currentLineColor, currentFillColor); 
         }
         });
+    btnEraser = new QPushButton("Ластик", this);
+    btnThick = new QPushButton("Толще (+)", this);
+    btnThin = new QPushButton("Тоньше (-)", this);
+
+    buttonLayout->addWidget(btnEraser);
+    buttonLayout->addWidget(btnThick);
+    buttonLayout->addWidget(btnThin);
+
+    static int currentWidth = 2;
+    connect(btnThick, &QPushButton::clicked, [this]() {
+        if (currentWidth < 20) {
+            currentWidth += 2;
+            scene->setLineWidth(currentWidth);
+        }
+        });
+
+    connect(btnThin, &QPushButton::clicked, [this]() {
+        if (currentWidth > 2) {
+            currentWidth -= 2;
+            scene->setLineWidth(currentWidth);
+        }
+        });
+
+    connect(btnEraser, &QPushButton::clicked, [this]() {
+        scene->setDrawingType(FigureType::Eraser);
+        });
+
 
     resize(900, 700);
 }
